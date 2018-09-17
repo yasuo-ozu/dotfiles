@@ -1,0 +1,57 @@
+#!/bin/bash
+
+abspath() {
+	local dname=$(dirname "$1")
+	local bname=$(basename "$1")
+	local pwdir=$(cd "$dname" && pwd)
+	echo "$pwdir/$bname"
+}
+
+getbase() {
+	local ret=$(df --output=target|sed '1d'| while read line; do [[ $(abspath $1) =~ $line/.* ]] && echo $line; done|sort -r | sed -ne 1p)
+	if [ -z "$ret" ]; then
+		ret='/'
+	fi
+	echo $ret
+}
+
+HOME=$(cd ~ && pwd)
+TRASHDIR="$HOME/.local/share/Trash/files"
+INFODIR="$HOME/.local/share/Trash/info"
+
+mkdir -p "$TRASHDIR" "$INFODIR"
+
+base=$(getbase "$TRASHDIR")
+flag=0
+for arg in "$@"; do
+	if [[ "$arg" =~ ^- || "$(getbase $arg)" != "$base" ]]; then
+		: $(( flag += 1 ))
+	fi
+done
+
+if [ $flag -eq 0 ]; then
+	for file in "$@"; do
+		if [ ! -e "$file" ]; then
+			echo "Not found: $file" 1>&2
+		else
+			fname=$(basename "$file")
+			newfname=$fname
+			index=2
+			while [ -e "$TRASHDIR/$newfname" ]; do
+				newfname=$fname.$((index++))
+			done
+			mv "$file" "$TRASHDIR/$newfname"
+			{
+				echo "[Trash Info]"
+				echo Path=$(abspath "$fname")
+				echo "DeletionDate="$(date -Isecond | sed -e 's/^\([^\+]*\).*$/\1/')
+			} > "$INFODIR/$newfname.trashinfo"
+		fi
+	done
+else
+	/usr/bin/rm "$@"
+fi
+
+
+
+# vim : filetype=bash :

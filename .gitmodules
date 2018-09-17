@@ -1,0 +1,9 @@
+[submodule "contrib/yay"]
+	path = contrib/yay
+	url = https://aur.archlinux.org/yay.git
+[submodule "contrib/aur-line-latest"]
+	path = contrib/aur-line-latest
+	url = git@github.com:yasuo-ozu/aur-line-latest.git
+[submodule "contrib/line-latest"]
+	path = contrib/line-latest
+	url = git@github.com:yasuo-ozu/aur-line-latest.git

@@ -1,0 +1,12 @@
+
+package 'texlive-bibtexextra'
+package 'texlive-core'
+package 'texlive-fontsextra'
+package 'texlive-formatsextra'
+package 'texlive-humanities'
+package 'texlive-langjapanese'
+package 'texlive-latexextra'
+package 'texlive-pictures'
+package 'texlive-pstricks'
+package 'texlive-publishers'
+package 'texlive-science'
