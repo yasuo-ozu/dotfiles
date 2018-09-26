@@ -1,4 +1,5 @@
 include_recipe 'recipe_helper'
+ROOT_DIR = File.expand_path("....", __FILE__)
 
 define :dotfile, source: nil do
 	source = params[:source] || params[:name]
