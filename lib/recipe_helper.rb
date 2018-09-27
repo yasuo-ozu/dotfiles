@@ -3,7 +3,6 @@ PLATFORM = node[:platform]
 ORIG_USER = ENV['ORIG_USER']
 MItamae::RecipeContext.class_eval do
 	def evacuate_file(f)
-		puts "evacuating file #{f}"
 		backupfile = "#{f}.bak"
 		if !File.exist?(backupfile) then
 			File.rename(f, backupfile)
@@ -20,7 +19,6 @@ MItamae::RecipeContext.class_eval do
 	end
 	# src: in ./conifg, dst in $HOME
 	def create_link(src, dst)
-		puts "creating link from #{src} to #{dst}"
 		dirs = File.dirname(dst).split("/")
 		ignore_dirs = ["/", "/home", "/root"]
 		secure_dirs = %w(.cache .cups .dbus .gnupg .local .pki .ssh)
