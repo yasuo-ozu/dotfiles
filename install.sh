@@ -2,6 +2,8 @@
 
 set -e
 
+git submodule init
+git submodule update
 bin/setup
 if [ `whoami` = "root" ]; then
 	bin/mitamae local $@ lib/recipe.rb
