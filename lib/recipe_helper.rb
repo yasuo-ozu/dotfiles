@@ -2,29 +2,28 @@ ROOT_DIR = File.expand_path('../..', __FILE__)
 PLATFORM = node[:platform]
 ORIG_USER = ENV['ORIG_USER']
 MItamae::RecipeContext.class_eval do
-	# src: in ./conifg, dst in $HOME
-	def create_link(src, dst)
-		if File.exist?(dst) then
-			if File::Stat.new(dst).ftype != 'link' || File.readlink(dst) != src then
-				dst_bak = "#{dst}.bak"
-				if !File.exist?(dst_bak) then
-					`mv "#{dst}" "#{dst_bak}"`
-				else
-					dst_bak_i = 0
-					loop do
-						if !File.exist?("#{dst_bak}#{dst_bak_i}") then
-							`mv "#{dst}" "#{dst_bak}#{dst_bak_i}"`
-							break
-						end
-						dst_bak_i += 1
-					end
+	def evacuate_file(f)
+		puts "evacuating file #{f}"
+		backupfile = "#{f}.bak"
+		if !File.exist?(backupfile) then
+			File.rename(f, backupfile)
+		else
+			i = 0
+			loop do
+				if !File.exist?("#{backupfile}#{i}") then
+					File.rename(f, "#{backupfile}#{i}")
+					break
 				end
+				i += 1
 			end
 		end
+	end
+	# src: in ./conifg, dst in $HOME
+	def create_link(src, dst)
+		puts "creating link from #{src} to #{dst}"
 		dirs = File.dirname(dst).split("/")
 		ignore_dirs = ["/", "/home", "/root"]
 		secure_dirs = %w(.cache .cups .dbus .gnupg .local .pki .ssh)
-		p dirs
 		fuser = node[:user]
 		for i in 0...(dirs.length) do
 			dir = dirs[0..i].join("/")
@@ -38,14 +37,16 @@ MItamae::RecipeContext.class_eval do
 			for secure_dir in secure_dirs do
 				fmode = "0700" if dirs.include?(secure_dir)
 			end
-			p fuser
-			p fmode
+			evacuate_file(dir) if File.exist?(dir) && File.lstat(dir).ftype != 'directory'
 			directory dir do
 				user	fuser
 				owner	fuser
 				group	fuser
 				mode	fmode
 			end
+		end
+		if File.exist?(dst) then
+			evacuate_file(dst) if File.lstat(dst).ftype != 'link' || File.readlink(dst) != src
 		end
 		link dst do
 			to src

@@ -1,5 +1,5 @@
 HOME=ENV['HOME']
-directory "~/.config"
+directory "#{HOME}/.config"
 [ "#{HOME}/.gnupg", "#{HOME}/.ssh"].each do |dir|
 	directory dir do
 		owner node[:user]
