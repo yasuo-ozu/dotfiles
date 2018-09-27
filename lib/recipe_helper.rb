@@ -1,6 +1,5 @@
 ROOT_DIR = File.expand_path('../..', __FILE__)
 PLATFORM = node[:platform]
-ORIG_USER = ENV['ORIG_USER']
 MItamae::RecipeContext.class_eval do
 	def evacuate_file(f)
 		backupfile = "#{f}.bak"
@@ -70,7 +69,7 @@ MItamae::RecipeContext.class_eval do
 	def package_sp(name)
 		if File.exists?(File.join(ROOT_DIR, 'contrib', name))
 			execute "install #{name} from contrib" do
-				command "cd \"#{File.join(ROOT_DIR, 'contrib', name)}\" && sudo -u \"#{ORIG_USER}\" makepkg -sf && pacman --noconfirm -U *.tar.xz"
+				command "cd \"#{File.join(ROOT_DIR, 'contrib', name)}\" && sudo -u \"#{node[:user]}\" makepkg -sf && pacman --noconfirm -U *.tar.xz"
 				not_if "pacman -Qi \"#{name}\" > /dev/null"
 			end
 		else
