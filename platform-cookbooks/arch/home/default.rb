@@ -4,7 +4,7 @@ directory "#{HOME}/.config"
 	directory dir do
 		owner node[:user]
 		group node[:user]
-		mode "600"
+		mode "700"
 	end
 end
 
