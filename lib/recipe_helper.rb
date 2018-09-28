@@ -3,6 +3,19 @@ PLATFORM = node[:platform]
 MItamae::RecipeContext.class_eval do
 	def evacuate_file(f)
 		backupfile = "#{f}.bak"
+		basename = ""
+		basename = $~[1] if f.match(/^\/home\/[^\/]+\/(.+)$/)
+		basename = $~[1] if f.match(/^\/root\/(.+)$/)
+		if basename != "" then
+			skelfile = "/etc/skel/#{basename}"
+			puts "skelfile: #{skelfile}, f: #{f}"
+			if File.exist?(skelfile) && `diff "#{skelfile}" "#{f}" > /dev/null` then
+				puts "deleting #{f}"
+				File.delete(f)
+				return
+			end
+			puts "do not delete #{f}"
+		end
 		if !File.exist?(backupfile) && !File.symlink?(backupfile) then
 			File.rename(f, backupfile)
 		else
@@ -42,11 +55,8 @@ MItamae::RecipeContext.class_eval do
 				mode	fmode
 			end
 		end
-		if File.exist?(dst) then
-			evacuate_file(dst) if File.lstat(dst).ftype != 'link' || File.readlink(dst) != src
-		end
 		evacuate_file(dst) if File.symlink?(dst) && File.readlink(dst) != src
-		evacuate_file(dst) if !File.symlink?(dst) && File.exist?(dst)
+		evacuate_file(dst) if File.exist?(dst) && !File.symlink?(dst)
 		link dst do
 			to src
 			user fuser
