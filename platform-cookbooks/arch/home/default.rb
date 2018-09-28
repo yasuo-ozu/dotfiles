@@ -12,7 +12,7 @@ package 'xdg-user-dirs'
 
 execute 'create directories in home' do
 	command 'LC_ALL=C xdg-user-dirs-update'
-	not_if '[ -e "#{HOME}/.config/user-dirs.dirs" ]'
+	not_if "[ -e \"#{HOME}/.config/user-dirs.dirs\" ]"
 end
 
 
