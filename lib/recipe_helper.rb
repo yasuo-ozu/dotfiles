@@ -3,12 +3,12 @@ PLATFORM = node[:platform]
 MItamae::RecipeContext.class_eval do
 	def evacuate_file(f)
 		backupfile = "#{f}.bak"
-		if !File.exist?(backupfile) then
+		if !File.exist?(backupfile) && !File.symlink?(backupfile) then
 			File.rename(f, backupfile)
 		else
 			i = 0
 			loop do
-				if !File.exist?("#{backupfile}#{i}") then
+				if !File.exist?("#{backupfile}#{i}") && File.symlink?("#{backupfile}#{i}") then
 					File.rename(f, "#{backupfile}#{i}")
 					break
 				end
@@ -45,6 +45,8 @@ MItamae::RecipeContext.class_eval do
 		if File.exist?(dst) then
 			evacuate_file(dst) if File.lstat(dst).ftype != 'link' || File.readlink(dst) != src
 		end
+		evacuate_file(dst) if File.symlink?(dst) && File.readlink(dst) != src
+		evacuate_file(dst) if !File.symlink?(dst) && File.exist?(dst)
 		link dst do
 			to src
 			user fuser
@@ -75,7 +77,7 @@ MItamae::RecipeContext.class_eval do
 		else
 			package('go')
 			package_sp('yay')
-			directory "~/.cache/yay" do
+			directory "#{ENV['HOME']}/.cache/yay" do
 				user node[:user]
 				owner node[:user]
 				group node[:user]
