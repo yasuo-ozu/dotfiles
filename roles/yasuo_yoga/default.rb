@@ -23,6 +23,7 @@ include_cookbook 'r'
 include_cookbook 'ssh'
 include_cookbook 'texlive'
 include_cookbook 'vim'
+include_cookbook 'zsh'
 
 package 'gimp'
 package 'inkscape'

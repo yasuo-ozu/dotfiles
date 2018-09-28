@@ -30,6 +30,5 @@ package 'trash-cli'
 package 'tree'
 package 'wget'
 package 'xsel'
-package 'zsh'
 
 
