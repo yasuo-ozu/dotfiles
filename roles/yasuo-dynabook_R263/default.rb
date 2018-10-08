@@ -42,6 +42,10 @@ include_cookbook 'gvfs'
 package_sp 'yay'
 package 'alacritty'
 
+link "/usr/bin/xterm" do
+	to "/usr/bin/alacritty"
+end
+
 dotfile '.local/bin'
 
 remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
