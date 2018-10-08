@@ -1,0 +1,34 @@
+#!/bin/bash
+
+DATE=`date +"%Y/%m/%d %H:%M:%S"`
+VOLUME=`amixer sget Master|tail -n 1|sed -e 's/^[^\[]*\[\(.*\)%\].*$/\1/'`
+if amixer sget Master | tail -n 1 | grep -q on; then
+	if [ "$VOLUME" = 0 ]; then
+		echo -n "🔇"
+	elif [ "$VOLUME" -lt 15 ]; then
+		echo -n "🔈"
+	elif [ "$VOLUME" -lt 30 ]; then
+		echo -n "🔉"
+	elif [ "$VOLUME" -lt 40 ]; then
+		echo -n "🔊"
+	fi
+	echo -n "$VOLUME"
+else
+	echo -n "🔇---"
+fi
+echo -n " | "
+if acpi -b | grep -q Discharging; then
+	echo -n "X"
+else
+	echo -n "O"
+fi
+BATTERY=`acpi -b | sed -e 's/^.* \([0-9]*%\).*$/\1/'`
+echo -n "$BATTERY"
+REMAINING=`acpi -b | sed -e 's/^.* \([0-9]*\):.*$/\1h/'`
+if acpi -b | grep -q Discharging; then
+	echo -n "$REMAINING"
+fi
+
+echo -n " | "
+echo -n "$DATE"
+

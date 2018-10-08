@@ -1,5 +1,6 @@
 
 package 'networkmanager'
+package 'network-manager-applet'
 package 'networkmanager-openconnect'
 
 service 'NetworkManager' do

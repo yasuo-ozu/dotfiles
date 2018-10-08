@@ -55,11 +55,23 @@ MItamae::RecipeContext.class_eval do
 				mode	fmode
 			end
 		end
-		evacuate_file(dst) if File.symlink?(dst) && File.readlink(dst) != src
-		evacuate_file(dst) if File.exist?(dst) && !File.symlink?(dst)
+		if File.symlink?(dst) && File.readlink(dst) != src then
+			evacuate_file(dst)
+		elsif File.exist?(dst) && !File.symlink?(dst) then
+			if !system("diff \"#{dst}\" \"#{src}\"") then
+				evacuate_file(dst)
+			else
+				File.delete(dst)
+			end
+		end
+		fmode = "0%o" % (File.stat(src).mode & 0777)
 		link dst do
 			to src
 			user fuser
+		end
+		file dst do
+			action :edit
+			mode fmode
 		end
 	end
 
@@ -93,7 +105,7 @@ MItamae::RecipeContext.class_eval do
 				group node[:user]
 			end
 			execute "install #{name} from aur" do
-				command "pacman --noconfirm -R sudo; yay --noconfirm -S \"#{name}\"; pacman --noconfirm -S sudo"
+				command "sudo -u #{node[:user]} -- yay --noconfirm -S \"#{name}\""
 				not_if "pacman -Qi \"#{name}\" > /dev/null"
 			end
 		end
