@@ -12,7 +12,7 @@ include_cookbook 'git'
 #include_cookbook 'gnome-tools'
 #include_cookbook 'golang'
 include_cookbook 'home'
-#include_cookbook 'ime'
+include_cookbook 'ime'
 #include_cookbook 'jdk'
 #include_cookbook 'joke'
 include_cookbook 'networkmanager'
@@ -24,6 +24,10 @@ include_cookbook 'ssh'
 #include_cookbook 'texlive'
 include_cookbook 'vim'
 include_cookbook 'zsh'
+include_cookbook 'dwm'
+include_cookbook 'env'
+include_cookbook 'yamanakalab'
+include_cookbook 'gvfs'
 
 #package 'gimp'
 #package 'inkscape'
@@ -36,5 +40,16 @@ include_cookbook 'zsh'
 
 #package_sp 'line-latest'
 package_sp 'yay'
+package 'alacritty'
+
+link "/usr/bin/xterm" do
+	to "/usr/bin/alacritty"
+end
 
 dotfile '.local/bin'
+
+remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
+	mode "644"
+	owner "root"
+	group "root"
+end

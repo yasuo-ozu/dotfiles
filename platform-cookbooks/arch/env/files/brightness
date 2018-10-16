@@ -1,0 +1,22 @@
+#!/bin/bash
+
+cd /sys/class/backlight
+while read LIGHT; do
+	MAX=`cat $LIGHT/max_brightness`
+	CURRENT=`cat $LIGHT/brightness`
+	STEP=`expr "$MAX" / 20`
+	if [ "$CURRENT" -le "$STEP" ]; then
+		STEP=`expr "$MAX" / 40`
+	fi
+	if [ "$1" = up ]; then
+		CURRENT=`expr "$CURRENT" '+' "$STEP"`
+	elif [ "$1" = down ]; then
+		CURRENT=`expr "$CURRENT" '-' "$STEP"`
+	else
+		echo "parameter should be 'up' or 'down'" 1>&2
+		exit 1
+	fi
+	[ "$CURRENT" -lt 0 ] && CURRENT=0
+	[ "$CURRENT" -gt "$MAX" ] && CURRENT=$MAX
+	echo "$CURRENT" > $LIGHT/brightness
+done < <(ls -A)
