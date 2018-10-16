@@ -93,6 +93,24 @@ case "$1" in
     video/brightnessup)
         /opt/brightness up
         ;;
+    video/switchmode)
+        SCREEN_USER=`ps -aux | sed -ne '/dwm/p' | head -n 1 | cut -d " " -f 1`
+        DPS=`sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr | sed -ne '/ connected/p' | cut -d " " -f 1`
+        MONITORS=`sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --listmonitors | head -n 1 | cut -d " " -f 2`
+        if [ "$MONITORS" -eq 1 ]; then
+            while read DP; do
+                if [ ! "$DP" = eDP1 ]; then
+                    sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --output $DP --auto --above eDP1
+                fi
+            done <<< $DPS
+        else
+            while read DP; do
+                if [ ! "$DP" = eDP1 ]; then
+                    sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --output $DP --off
+                fi
+            done <<< $DPS
+        fi
+        ;;
     *)
         logger "ACPI group/action undefined: $1 / $2"
         ;;
