@@ -1,6 +1,7 @@
 
 package 'nodejs'
 package 'npm'
+package 'mongodb'
 
 execute "install gulp" do
 	not_if 'npm -g list gulp'
