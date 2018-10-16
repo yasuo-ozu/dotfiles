@@ -135,22 +135,6 @@ autocmd VimEnter,InsertLeave * call EndInsert()
 autocmd VimLeave,InsertEnter * call BeginInsert()
 
 
-filetype plugin on
-filetype indent on
-
-augroup vimrcHighlight
-	autocmd ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=237
-	autocmd ColorScheme * highlight Comment cterm=NONE ctermfg=100 ctermbg=NONE
-	autocmd ColorScheme * highlight Tag cterm=NONE ctermfg=NONE ctermbg=52
-	autocmd ColorScheme * highlight Todo cterm=NONE ctermfg=NONE ctermbg=100
-	autocmd ColorScheme * highlight LineNr cterm=NONE ctermfg=242 ctermbg=NONE
-	autocmd ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 ctermbg=NONE
-augroup END
-
-colorscheme darkblue
-syntax on
-
-
 " <Tab>が効かなくなるため無効化
 " inoremap <expr><C-i>     neocomplete#complete_common_string()
 
@@ -219,11 +203,38 @@ function! s:InsertSpaceIndent()
 endfunction
 inoremap <expr> <C-i> <SID>InsertSpaceIndent()
 
-"function! s:RefreshCommand()
-"	let ft = &ft
-"	set ft=text
-"	let &ft=ft
-"endfunction
-":command! Refresh call <SID>RefreshCommand()
-"nnoremap <C-f> <C-f>:Refresh<CR>
-"nnoremap <C-b> <C-b>:Refresh<CR>
+" dein setting
+if isdirectory(expand('~/.cache/dein'))
+	let plugin_dir = expand('~/.cache/dein')
+	let install_dir = expand('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+	let &runtimepath = &runtimepath . ',' . install_dir
+	if dein#load_state(plugin_dir)
+		call dein#begin(plugin_dir)
+		call dein#add(install_dir)
+
+		call dein#add('leafgarland/typescript-vim')
+
+		call dein#end()
+		call dein#save_state()
+	endif
+	if dein#check_install()
+		call dein#install()
+	endif
+endif
+
+filetype plugin on
+filetype indent on
+
+augroup vimrcHighlight
+	autocmd ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=237
+	autocmd ColorScheme * highlight Comment cterm=NONE ctermfg=100 ctermbg=NONE
+	autocmd ColorScheme * highlight Tag cterm=NONE ctermfg=NONE ctermbg=52
+	autocmd ColorScheme * highlight Todo cterm=NONE ctermfg=NONE ctermbg=100
+	autocmd ColorScheme * highlight LineNr cterm=NONE ctermfg=242 ctermbg=NONE
+	autocmd ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 ctermbg=NONE
+augroup END
+
+colorscheme darkblue
+syntax on
+
+
