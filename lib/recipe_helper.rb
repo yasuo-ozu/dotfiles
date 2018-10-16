@@ -93,7 +93,8 @@ MItamae::RecipeContext.class_eval do
 				group node[:user]
 			end
 			execute "install #{name} from aur" do
-				command "pacman --noconfirm -R sudo; yay --noconfirm -S \"#{name}\"; pacman --noconfirm -S sudo"
+				user node[:user]
+				command "yay --noconfirm -S \"#{name}\""
 				not_if "pacman -Qi \"#{name}\" > /dev/null"
 			end
 		end
