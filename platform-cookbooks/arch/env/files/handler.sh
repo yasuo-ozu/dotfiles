@@ -75,6 +75,10 @@ case "$1" in
     button/volumeup)
         amixer sset Master '5%+'
         ;;
+    button/screenlock)
+        SCREEN_USER=`ps -aux | sed -ne '/dwm/p' | head -n 1 | cut -d " " -f 1`
+        sudo -u $SCREEN_USER -- env DISPLAY=:0 /usr/bin/slock
+        ;;
     button/mute)
         if amixer sget Master | tail -n 1 | grep -q "off"; then
             amixer sset Master on
