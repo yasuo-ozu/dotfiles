@@ -53,3 +53,10 @@ remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
 	owner "root"
 	group "root"
 end
+
+remote_file "/etc/systemd/timesyncd.conf"
+
+execute "setup ntp" do
+	command "timedatectl set-ntp true"
+	not_if "LANG=C timedatectl status | sed -ne '/NTP/p' | grep -q active"
+end
