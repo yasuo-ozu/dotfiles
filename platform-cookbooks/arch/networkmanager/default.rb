@@ -9,4 +9,6 @@ end
 service 'NetworkManager-dispatcher' do
 	action [:enable, :start]
 end
-remote_file '/etc/NetworkManager/dispatcher.d/waseda-proxy.sh'
+remote_file '/etc/NetworkManager/dispatcher.d/waseda-proxy.sh' do
+	mode "0744"
+end
