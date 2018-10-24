@@ -54,7 +54,14 @@ remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
 	group "root"
 end
 
-remote_file "/etc/systemd/timesyncd.conf"
+remote_file "/etc/systemd/timesyncd.conf" do
+	mode "0644"
+end
+
+package "nautilus"
+package "libwbclient"
+package "gvfs-smb"
+package "smbclient"
 
 execute "setup ntp" do
 	command "timedatectl set-ntp true"
