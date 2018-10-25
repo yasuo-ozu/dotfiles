@@ -198,6 +198,7 @@ today() {
 
 runtex() {
 	TEXFILE="$1"
+	shift
 	if [ ! -f "$TEXFILE" ]; then
 		echo "Usage: runtex texfile.tex" 1>&2
 		return 1
@@ -206,6 +207,6 @@ runtex() {
 	if [ ! -d "$TEXDIR" ]; then
 		cp -r "$HOME/.local/share/runtex" "$TEXDIR"
 	fi
-	make -C "$TEXDIR"
+	PWD="$TEXDIR" make -C "$TEXDIR" "$@"
 }
 		

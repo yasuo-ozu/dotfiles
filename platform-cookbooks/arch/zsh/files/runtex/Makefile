@@ -1,4 +1,4 @@
-BASENAME := $(basename $(basename $(notdir $(PWD))))
+BASENAME := $(patsubst %.tex.files,%,$(notdir $(PWD)))
 PDF_VIEWER := evince
 
 .PHONY:	open clean
@@ -17,12 +17,12 @@ $(BASENAME).pdf:	$(BASENAME).dvi
 
 header.tex:	$(BASENAME).tex
 	echo "\\input{lib/std.tex}" > "$@"
-	for read NAME; do \
+	while read NAME; do \
 		case "$$NAME" in; \
 			*listings) ;\
 				echo "\\input{lib/listings.tex}" >> "$@" ;; \
 		esac ;\
-	done < `cat "$(BASENAME).tex" | sed -e '/^%%/d' |sed -e 's/\\/\n\\/g' | sed -ne '/^\\/p' | sed -e 's/^\\\([a-zA-Z0-9]+\).*$/\1/'`
+	done < `cat "$(BASENAME).tex" | sed -e '/^%/d' |sed -e 's/\\/\n\\/g' | sed -ne '/^\\/p' | sed -e 's/^\\\([a-zA-Z0-9]+\).*$/\1/'`
 
 clean:
 	rm -rf *.log *.aux *.dvi *.fls *.d *.pdf *.bbl *.blg svg/*.png svg/*.eps svg/*.pdf data/*.tex data/*.png data/*.eps plt/*.png plt/*.eps plt/default.am data/m_*.txt
