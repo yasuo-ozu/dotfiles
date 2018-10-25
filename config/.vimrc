@@ -1,3 +1,7 @@
+augroup vimrc
+  autocmd!
+augroup END
+
 set directory=~/.vim/swap
 set backupdir=~/.vim/temp
 set tabstop=4
@@ -100,13 +104,10 @@ nnoremap <C-w><S-Right> <C-w>L
 "augroup END
 
 " スワップ発見時roで開く
-augroup swapchoice-readonly
-  autocmd!
-    autocmd SwapExists * let v:swapchoice = 'o'
-augroup END
+autocmd vimrc SwapExists * let v:swapchoice = 'o'
 
 " ビルドエラー時Quickfixを開く
-autocmd QuickfixCmdPost make,grep,grepadd,vimgrep if len(getqflist()) != 0 | copen | else | cclose | endif
+autocmd vimrc QuickfixCmdPost make,grep,grepadd,vimgrep if len(getqflist()) != 0 | copen | else | cclose | endif
 
 "set shellpipe="1>\dev\null 2>&1 | sed -e '/^||/d'"
 set shellpipe=2>
@@ -131,8 +132,8 @@ function! EndInsert()
 	" endif
 endfunction
 
-autocmd VimEnter,InsertLeave * call EndInsert()
-autocmd VimLeave,InsertEnter * call BeginInsert()
+autocmd vimrc VimEnter,InsertLeave * call EndInsert()
+autocmd vimrc VimLeave,InsertEnter * call BeginInsert()
 
 
 " <Tab>が効かなくなるため無効化
@@ -225,16 +226,16 @@ endif
 filetype plugin on
 filetype indent on
 
-augroup vimrcHighlight
-	autocmd ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=237
-	autocmd ColorScheme * highlight Comment cterm=NONE ctermfg=100 ctermbg=NONE
-	autocmd ColorScheme * highlight Tag cterm=NONE ctermfg=NONE ctermbg=52
-	autocmd ColorScheme * highlight Todo cterm=NONE ctermfg=NONE ctermbg=100
-	autocmd ColorScheme * highlight LineNr cterm=NONE ctermfg=242 ctermbg=NONE
-	autocmd ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 ctermbg=NONE
-augroup END
+autocmd vimrc ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=237
+autocmd vimrc ColorScheme * highlight Comment cterm=NONE ctermfg=100 ctermbg=NONE
+autocmd vimrc ColorScheme * highlight Tag cterm=NONE ctermfg=NONE ctermbg=52
+autocmd vimrc ColorScheme * highlight Todo cterm=NONE ctermfg=NONE ctermbg=100
+autocmd vimrc ColorScheme * highlight LineNr cterm=NONE ctermfg=242 ctermbg=NONE
+autocmd vimrc ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 ctermbg=NONE
 
 colorscheme darkblue
 syntax on
 
-
+for file in split(glob("$HOME/.vim/template/*"), "\n")
+	execute "autocmd vimrc BufNewFile *." . fnamemodify(file, ":e") ."  0r " . file
+endfor

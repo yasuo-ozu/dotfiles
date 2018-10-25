@@ -195,4 +195,17 @@ today() {
 		cd "$TODAY"
 	fi
 }
+
+runtex() {
+	TEXFILE="$1"
+	if [ ! -f "$TEXFILE" ]; then
+		echo "Usage: runtex texfile.tex" 1>&2
+		return 1
+	fi
+	TEXDIR="${TEXFILE}.files"
+	if [ ! -d "$TEXDIR" ]; then
+		cp -r "$HOME/.local/share/runtex" "$TEXDIR"
+	fi
+	make -C "$TEXDIR"
+}
 		

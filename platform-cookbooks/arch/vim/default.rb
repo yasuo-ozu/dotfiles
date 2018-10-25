@@ -2,6 +2,7 @@
 package 'gvim'
 package 'vim-runtime'
 dotfile '.vimrc'
+dotfile '.vim/template/latex.tex'
 directory "#{ENV['HOME']}/.vim/swap" do
 	user node[:user]
 end
