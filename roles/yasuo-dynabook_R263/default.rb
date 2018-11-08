@@ -46,6 +46,13 @@ link "/usr/bin/xterm" do
 	to "/usr/bin/alacritty"
 end
 
+remote_directory "#{ENV['HOME']}/alacritty" do
+	mode "0755"
+	user node[:user]
+	action :create
+	source 'files/alacritty'
+end
+
 dotfile '.local/bin'
 
 remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
