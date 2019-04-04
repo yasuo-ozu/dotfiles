@@ -1,4 +1,5 @@
 package 'eog'
 package 'evince'
+package 'poppler-data'
 package 'nautilus'
 package 'sushi'

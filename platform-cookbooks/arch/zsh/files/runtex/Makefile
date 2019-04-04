@@ -4,6 +4,8 @@ PDF_VIEWER := evince
 .PHONY:	open clean
 
 open:	$(BASENAME).pdf
+	if [ ! -s "../Makefile" ] ; then \
+		/bin/echo -e 'pdf:\n\tcd "$(BASENAME).tex.files" ; make ' >> "../Makefile" ; fi
 	$(PDF_VIEWER) "$<" >& /dev/null &
 
 $(BASENAME).pdf:	$(BASENAME).dvi
@@ -12,31 +14,34 @@ $(BASENAME).pdf:	$(BASENAME).dvi
 	rm -f $@
 	mv linearized_$@ $@
 
-%.tex:
+%.tex:	../%.tex
 	cp "../$@" "$@"
 
 header.tex:	$(BASENAME).tex
-	echo "\\input{lib/std.tex}" > "$@"
-	while read NAME; do \
-		case "$$NAME" in; \
-			*listings) ;\
-				echo "\\input{lib/listings.tex}" >> "$@" ;; \
+	cat "$(BASENAME).tex"
+	echo "\\input{lib/std.tex}" > "$@.tmp"
+	while read NAME ; do \
+		echo 0000 $$NAME ;\
+		case "$$NAME" in \
+			listings ) \
+				echo "\\input{lib/listings.tex}" >> "$@.tmp" ; ;; \
+			braket ) \
+				echo "\\usepackage{braket}" >> "$@.tmp" ; ;;\
 		esac ;\
-	done < `cat "$(BASENAME).tex" | sed -e '/^%/d' |sed -e 's/\\/\n\\/g' | sed -ne '/^\\/p' | sed -e 's/^\\\([a-zA-Z0-9]+\).*$/\1/'`
+	done <<< $$(cat "$(BASENAME).tex" | sed -e '/^%/d' |sed -e 's/\\/\n\\/g' | sed -ne '/^\\[a-zA-Z0-9]\+.*$$/p' | sed -e 's/^\\\([a-zA-Z0-9]\+\).*$$/\1/')
+	mv "$@.tmp" "$@"
 
 clean:
-	rm -rf *.log *.aux *.dvi *.fls *.d *.pdf *.bbl *.blg svg/*.png svg/*.eps svg/*.pdf data/*.tex data/*.png data/*.eps plt/*.png plt/*.eps plt/default.am data/m_*.txt
+	rm -rf *.log *.aux *.dvi *.fls *.d *.pdf *.bbl *.blg svg/*.png svg/*.eps svg/*.pdf data/*.tex data/*.png data/*.eps plt/*.png plt/*.eps plt/default.am data/m_*.txt $(BASENAME).tex header.tex *.tmp
 
-reference.bib:
-	if [ ! -f "$@" ]; then touch "$@" ; fi
 
 %.dvi:	%.tex %.d reference.bib Makefile
 	platex --shell-escape -interaction=batchmode -halt-on-error $<
-	if [ -s "reference.bib" ]; then pbibtex $(basename $<) ; fi
-	if [ -s "reference.bib" ]; then platex --shell-escape -interaction=batchmode -halt-on-error $< ; fi
+	if [ -s "reference.bib" ] ; then pbibtex $(basename $<) ; fi
+	if [ -s "reference.bib" ] ; then platex --shell-escape -interaction=batchmode -halt-on-error $< ; fi
 	for i in `seq 1 3`; do\
 		if grep -F 'Rerun to get cross-references right.' $(basename $<).log; then\
-			platex --shell-escape -interaction=batchmode -halt-on-error $<; else exit 0;\
+			platex --shell-escape -interaction=batchmode -halt-on-error $< ; else exit 0;\
 		fi;\
 	done
 %.fls:	%.tex Makefile

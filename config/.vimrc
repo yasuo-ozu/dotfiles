@@ -4,17 +4,12 @@ augroup END
 
 set directory=~/.vim/swap
 set backupdir=~/.vim/temp
-set tabstop=4
-set shiftwidth=4
 set number
 set modeline
 set foldmethod=marker
 set wrapscan
 set whichwrap=b,s,<,>,[,]
 set mouse=ar
-set autoindent
-set noexpandtab
-set smartindent
 set hlsearch
 set incsearch
 set wildmenu
@@ -188,22 +183,6 @@ let g:tex_fold_enabled=1
 let g:tex_no_error=1
 set conceallevel=0
 
-function! s:InsertSpaceIndent()
-	let col = col('.') - 1
-	if col == 0 || getline('.')[col - 1] != ' '
-		return "	"
-	else
-		let s = ""
-		let c = (virtcol('.') - 1) % &tabstop
-		while c < 4
-			let s = s . " "
-			let c = c + 1
-		endwhile
-		return s
-	endif
-endfunction
-inoremap <expr> <C-i> <SID>InsertSpaceIndent()
-
 " dein setting
 if isdirectory(expand('~/.cache/dein'))
 	let plugin_dir = expand('~/.cache/dein')
@@ -223,6 +202,7 @@ if isdirectory(expand('~/.cache/dein'))
 	endif
 endif
 
+filetype off
 filetype plugin on
 filetype indent on
 
@@ -236,6 +216,106 @@ autocmd vimrc ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 c
 colorscheme darkblue
 syntax on
 
+set noexpandtab
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=0
+set list
+set listchars=tab:»\ ,trail:-
+highlight SpecialKey ctermfg=242
+function! s:InsertSpaceIndent()
+	let sts = &softtabstop == 0 ? &tabstop : &softtabstop
+	let col = col('.') - 1
+	if col == 0 || getline('.')[col - 1] != ' '
+		return "	"
+	else
+		let s = ""
+		let c = (virtcol('.') - 1) % sts
+		while c < sts
+			let s = s . " "
+			let c = c + 1
+		endwhile
+		return s
+	endif
+endfunction
+function! s:CopyIndent(r)
+	let ts = &tabstop
+	let l = line('.')
+	let r = a:r + l
+	let ls = getline(l)
+	let lm = strlen(ls)
+	let rs = getline(r)
+	let rm = strlen(rs)
+	echo ls
+	let c = 0
+	let d = 0
+	let i = 0
+	let j = 0
+	while i < lm
+		let lc = ls[i]
+		if lc == ' '
+			let c = c + 1
+		elseif lc == '	'
+			let c = c + ts - ( c % ts )
+		else
+			break
+		endif
+		let i = i + 1
+	endwhile
+	while j < rm && d < c
+		let rc = rs[j]
+		if rc == ' '
+			let d = d + 1
+		elseif rc == '	' && d + ts - ( d % ts ) <= c
+			let d = d + ts - ( d % ts )
+		else
+			break
+		endif
+		let j = j + 1
+	endwhile
+	let rs = strpart(rs, 0, j)
+	while d < c
+		if &expandtab == 0 && d + ts - ( d % ts ) <= c
+			let rs = rs . '	'
+			let d = d + ts - ( d % ts )
+		else
+			let rs = rs . ' '
+			let d = d + 1
+		endif
+	endwhile
+	let rs = rs . strpart(ls, i)
+	call setline('.', rs)
+endfunction
+
+inoremap <expr> <C-i> <SID>InsertSpaceIndent()
+inoremap <CR> <CR>a<BS><ESC>:call <SID>CopyIndent(-1)<CR>A
+nnoremap o oa<BS><Esc>:call <SID>CopyIndent(-1)<CR>A
+nnoremap O Oa<BS><Esc>:call <SID>CopyIndent(1)<CR>A
+
 for file in split(glob("$HOME/.vim/template/*"), "\n")
 	execute "autocmd vimrc BufNewFile *." . fnamemodify(file, ":e") ."  0r " . file
 endfor
+
+inoremap <C-H> <C-W>
+inoremap <C-L> <C-[>u
+ab \b \begin
+ab \e \end
+
+set wildmode=list:longest
+set ttyfast
+set mouse=a
+set mousemodel=popup_setpos
+"nnoremenu 1.40 PopUp.&Paste	"+gP
+"
+
+let g:netrw_liststyle=1
+let g:netrw_banner=0
+let g:netrw_sizestyle="H"
+let g:netrw_timefmt="%Y/%m/%d(%a) %H:%M:%S"
+let g:netrw_preview=1
+
+noremap <C-w>+ <C-w>3+
+noremap <C-w>- <C-w>3-
+noremap <C-w>< <C-w>3<
+noremap <C-w>> <C-w>3>
