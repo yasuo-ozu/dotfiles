@@ -24,7 +24,7 @@ include_cookbook 'ssh'
 include_cookbook 'texlive'
 include_cookbook 'vim'
 include_cookbook 'zsh'
-include_cookbook 'dwm'
+#include_cookbook 'dwm'
 include_cookbook 'env'
 include_cookbook 'yamanakalab'
 include_cookbook 'gvfs'
@@ -40,18 +40,7 @@ package 'vlc'
 
 #package_sp 'line-latest'
 package_sp 'yay'
-package 'alacritty'
-
-link "/usr/bin/xterm" do
-	to "/usr/bin/alacritty"
-end
-
-remote_directory "#{ENV['HOME']}/alacritty" do
-	mode "0755"
-	user node[:user]
-	action :create
-	source 'files/alacritty'
-end
+include_cookbook 'alacritty'
 
 dotfile '.local/bin'
 
