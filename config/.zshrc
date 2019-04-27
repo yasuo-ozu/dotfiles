@@ -33,10 +33,6 @@ setopt prompt_subst
 autoload -Uz colors
 colors
 
-exists_vim_swap() {
-	if 
-}
-
 local return_code="%(?..%{$fg[red]%}%? %{$reset_color%})"
 PROMPT='\
 %{$fg[red]%}`[ "$(ls -A ~/.vim/swap | wc -l )" -gt "$(ps -eo comm | grep -e vim | wc -l)" ] && echo -n !\ `\
