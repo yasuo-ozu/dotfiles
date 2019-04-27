@@ -29,6 +29,7 @@ include_cookbook 'awesome'
 include_cookbook 'env'
 #include_cookbook 'yamanakalab'
 include_cookbook 'gvfs'
+include_cookbook 'alacritty'
 
 #package 'gimp'
 package 'inkscape'
@@ -41,19 +42,6 @@ package 'vlc'
 
 #package_sp 'line-latest'
 package_sp 'yay'
-package 'alacritty'
-dotfile '.config/alacritty'
-
-link "/usr/bin/xterm" do
-	to "/usr/bin/alacritty"
-end
-
-remote_directory "#{ENV['HOME']}/alacritty" do
-	mode "0755"
-	user node[:user]
-	action :create
-	source 'files/alacritty'
-end
 
 dotfile '.local/bin'
 
