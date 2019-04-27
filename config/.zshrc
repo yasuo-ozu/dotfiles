@@ -33,8 +33,14 @@ setopt prompt_subst
 autoload -Uz colors
 colors
 
+exists_vim_swap() {
+	if 
+}
+
 local return_code="%(?..%{$fg[red]%}%? %{$reset_color%})"
-PROMPT='%{$fg[blue]%}{ %c } \
+PROMPT='\
+%{$fg[red]%}`[ "$(ls -A ~/.vim/swap | wc -l )" -gt "$(ps -eo comm | grep -e vim | wc -l)" ] && echo -n !\ `\
+%{$fg[blue]%}{ %c } \
 %{$fg[green]%}`  git rev-parse --abbrev-ref HEAD 2> /dev/null || echo ""  `%{$reset_color%} \
 %{$fg[red]%}%(!.#.»)%{$reset_color%} '
 
