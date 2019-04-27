@@ -21,7 +21,7 @@ MItamae::RecipeContext.class_eval do
 		else
 			i = 0
 			loop do
-				if !File.exist?("#{backupfile}#{i}") && File.symlink?("#{backupfile}#{i}") then
+				if !File.exist?("#{backupfile}#{i}") && !File.symlink?("#{backupfile}#{i}") then
 					File.rename(f, "#{backupfile}#{i}")
 					break
 				end

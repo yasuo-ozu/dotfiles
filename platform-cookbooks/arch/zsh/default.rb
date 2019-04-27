@@ -1,6 +1,11 @@
 package 'zsh'
 dotfile '.zshrc'
 
+directory '.local/share' do
+	user node[:user]
+	action :create
+end
+
 remote_directory '.local/share/runtex' do
 	user node[:user]
 	action :create

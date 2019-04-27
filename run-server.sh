@@ -23,7 +23,13 @@ echo "run 'nc $IPADDR $PORT < /dev/null | bash' on target host"
 
 (
 	echo '#!/bin/bash'
-	echo 'A=`mktemp -d /tmp/dotfiles.XXXXX`'
+	echo 'A="$HOME/.dotfiles"'
+	echo 'if [ -d "$A/.git" ]; then'
+	echo '  echo "The repository $A already exists." 1>&2'
+	echo '  exit 1'
+	echo 'fi'
+	echo '[ -e "$A" ] && rm -r "$A"'
+	echo 'mkdir "$A"'
 	echo 'B=`mktemp /tmp/dotfiles.XXXXX`'
 	echo 'MYPID=$$'
 	echo 'while [[ ! -c $(readlink /proc/$MYPID/fd/0) ]]; do'
@@ -35,10 +41,12 @@ echo "run 'nc $IPADDR $PORT < /dev/null | bash' on target host"
 	echo 'done'
 	#echo 'timeout 4 bash -c " cat /dev/stdin | tar zxC $A"; cd "$A"; bash install.sh < /proc/$MYPID/fd/0; exit 0'
 	#echo 'tar zxC $A; cd "$A"; bash install.sh < /proc/$MYPID/fd/0; exit 0'
-	echo 'cat > "$B"; cat "$B" | tar zxC $A; cd "$A"; bash install.sh < /proc/$MYPID/fd/0; rm -rf "$A" "$B"; exit 0'
+	echo 'cat > "$B"; cat "$B" | tar zxC $A; cd "$A"; bash install.sh < /proc/$MYPID/fd/0; rm -rf "$B" "$A/.git"; exit 0'
 	cat "$TMPFILE"
 	exec 1>&-
-) | nc -l -c -vv -p "$PORT"
+	sleep .5
+	ps --ppid "$$" -o comm,pid | tail -n +2 | awk '/^nc/{print $2}' | xargs -I{} kill {}
+) | nc -l -vv -p "$PORT"
 rm -f "$TMPFILE"
 
 
