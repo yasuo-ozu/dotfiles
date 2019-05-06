@@ -1,5 +1,5 @@
 include_cookbook "xorg"
-package "stalonetray"
+package "volumeicon"
 package "awesome"
 
 dotfile ".config/awesome"

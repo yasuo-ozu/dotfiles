@@ -49,3 +49,9 @@ package 'util-linux'
 # package 'vi'
 package 'which'
 package 'xfsprogs'
+
+execute "add multilib to pacman.conf" do
+	not_if 'cat /etc/pacman.conf | sed -e "/^#/d" | grep -q "[multilub]"'
+	command '/bin/echo -e "[multilib]\nInclude = /etc/pacman.d/mirrorlist" >> /etc/pacman.conf && pacman -Sy'
+end
+

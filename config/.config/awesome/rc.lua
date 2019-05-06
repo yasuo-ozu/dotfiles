@@ -61,11 +61,11 @@ modkey = "Mod4"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
-    awful.layout.suit.floating,
     awful.layout.suit.tile,
---    awful.layout.suit.tile.left,
---    awful.layout.suit.tile.bottom,
---    awful.layout.suit.tile.top,
+    awful.layout.suit.floating,
+   awful.layout.suit.tile.left,
+    awful.layout.suit.tile.bottom,
+    awful.layout.suit.tile.top,
 --    awful.layout.suit.fair,
 --    awful.layout.suit.fair.horizontal,
 --    awful.layout.suit.spiral,
@@ -82,21 +82,22 @@ awful.layout.layouts = {
 
 -- {{{ Menu
 -- Create a launcher widget and a main menu
-myawesomemenu = {
-   { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
-   { "manual", terminal .. " -e man awesome" },
-   { "edit config", editor_cmd .. " " .. awesome.conffile },
-   { "restart", awesome.restart },
-   { "quit", function() awesome.quit() end },
-}
 
-mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
-                                    { "open terminal", terminal }
-                                  }
-                        })
-
-mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
-                                     menu = mymainmenu })
+-- myawesomemenu = {
+--    { "hotkeys", function() hotkeys_popup.show_help(nil, awful.screen.focused()) end },
+--    { "manual", terminal .. " -e man awesome" },
+--    { "edit config", editor_cmd .. " " .. awesome.conffile },
+--    { "restart", awesome.restart },
+--    { "quit", function() awesome.quit() end },
+-- }
+-- 
+-- mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesome_icon },
+--                                     { "open terminal", terminal }
+--                                   }
+--                         })
+-- 
+-- mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
+--                                      menu = mymainmenu })
 
 -- Menubar configuration
 menubar.utils.terminal = terminal -- Set the terminal for applications that require it
@@ -169,7 +170,7 @@ awful.screen.connect_for_each_screen(function(s)
     set_wallpaper(s)
 
     -- Each screen has its own tag table.
-    awful.tag({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }, s, awful.layout.layouts[1])
+    awful.tag({ "1", "2", "3", "4" }, s, awful.layout.layouts[1])
 
     -- Create a promptbox for each screen
     s.mypromptbox = awful.widget.prompt()
@@ -203,7 +204,7 @@ awful.screen.connect_for_each_screen(function(s)
         layout = wibox.layout.align.horizontal,
         { -- Left widgets
             layout = wibox.layout.fixed.horizontal,
-            mylauncher,
+            -- mylauncher,
             s.mytaglist,
             s.mypromptbox,
         },
@@ -326,7 +327,13 @@ globalkeys = gears.table.join(
               {description = "lua execute prompt", group = "awesome"}),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end,
-              {description = "show the menubar", group = "launcher"})
+              {description = "show the menubar", group = "launcher"}),
+	awful.key({ }, "XF86Display", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd XF86Display", false) end),
+	awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd XF86AudioRaiseVolume", false) end),
+	awful.key({ }, "XF86AudioLowerVolume", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd XF86AudioRaiseVolume", false) end),
+	awful.key({ }, "XF86MonBrightnessUp", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd XF86MonBrightnessUp", false) end),
+	awful.key({ }, "XF86MonBrightnessDown", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd XF86MonBrightnessDown", false) end),
+	awful.key({ modkey }, "l", function () awful.util.spawn("/home/yasuo/.local/bin/usercmd Super_L", false) end)
 )
 
 clientkeys = gears.table.join(
@@ -563,5 +570,3 @@ client.connect_signal("focus", function(c) c.border_color = beautiful.border_foc
 client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 
-awful.key({ }, "XF86ScreenSaver", function () awful.util.spawn("sudo -u `ps -aux | sed -ne '/dwm/p' | head -n 1 | cut -d " " -f 1` -- env DISPLAY=:0 /usr/bin/slock", false) end),
-awful.key({ }, "XF86Display", function () awful.util.spawn("~/.local/bin/switch_display", false) end),

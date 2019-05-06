@@ -1,0 +1,75 @@
+#!/bin/bash
+
+SCREEN_USER="$USER"
+
+if [ "$SCREEN_USER" = root ]; then
+	SCREEN_USER=`ps -aux | sed -ne '/awesome/p' | head -n 1 | cut -d " " -f 1`
+fi
+
+change_brightness() {
+	BACKLIGHT_ROOT=/sys/class/backlight
+	while read LIGHT; do
+		MAX=`cat $BACKLIGHT_ROOT/$LIGHT/max_brightness`
+		CURRENT=`cat $BACKLIGHT_ROOT/$LIGHT/brightness`
+		STEP=`expr "$MAX" / 20`
+		if [ "$CURRENT" -le "$STEP" ]; then
+			STEP=`expr "$MAX" / 40`
+		fi
+		if [ "$1" = up ]; then
+			CURRENT=`expr "$CURRENT" '+' "$STEP"`
+		elif [ "$1" = down ]; then
+			CURRENT=`expr "$CURRENT" '-' "$STEP"`
+		else
+			echo "parameter should be 'up' or 'down'" 1>&2
+			exit 1
+		fi
+		[ "$CURRENT" -lt 0 ] && CURRENT=0
+		[ "$CURRENT" -gt "$MAX" ] && CURRENT=$MAX
+		echo "$CURRENT" > $BACKLIGHT_ROOT/$LIGHT/brightness
+	done < <(ls -A $BACKLIGHT_ROOT)
+}
+
+case "$1" in
+	"XF86ScreenSaver")
+		;;
+	"XF86Display")
+        DPS=`sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr | sed -ne '/ connected/p' | cut -d " " -f 1`
+        MONITORS=`sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --listmonitors | head -n 1 | cut -d " " -f 2`
+        if [ "$MONITORS" -eq 1 ]; then
+            while read DP; do
+                if [ ! "$DP" = eDP1 ]; then
+                    sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --output $DP --auto --above eDP1
+                fi
+            done <<< $DPS
+        else
+            while read DP; do
+                if [ ! "$DP" = eDP1 ]; then
+                    sudo -u $SCREEN_USER -- env DISPLAY=:0 xrandr --output $DP --off
+                fi
+            done <<< $DPS
+        fi
+		;;
+	"XF86AudioMute")
+		;;
+	"XF86AudioLowerVolume")
+		which amixer &> /dev/null && amixer sset Master '5%-'
+		;;
+	"XF86AudioRaiseVolume")
+		which amixer &> /dev/null && amixer sset Master '5%+'
+		;;
+	"XF86AudioMicMute")
+		;;
+	"XF86RFKill")
+		;;
+	"XF86WebCam")
+		;;
+	"XF86MonBrightnessUp")
+		change_brightness up
+		;;
+	"XF86MonBrightnessDown")
+		change_brightness down
+		;;
+	"Super_L")
+        sudo -u $SCREEN_USER -- env DISPLAY=:0 /usr/bin/slock
+		;;
+esac

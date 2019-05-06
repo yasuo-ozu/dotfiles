@@ -15,7 +15,7 @@ end
 [ node[:user], "root" ].each do |user|
   execute "change #{user}'s shell to /bin/zsh" do
     command "usermod -s /bin/zsh #{user}"
-    not_if "cat /etc/passwd | awk 'BEGIN{FS=\":\"} $1~/^yasuo:/{print $7}' | grep -q /bin/zsh"
+    not_if "cat /etc/passwd | awk 'BEGIN{FS=\":\"} $1~/^#{user}/{print $7}' | grep -q /bin/zsh"
   end
 end
 

@@ -6,9 +6,9 @@ include_cookbook 'chromium'
 #include_cookbook 'deadbeef'
 include_cookbook 'devel'
 #include_cookbook 'docker'
-#include_cookbook 'firefox'
+include_cookbook 'firefox'
 include_cookbook 'fonts'
-#include_cookbook 'git'
+include_cookbook 'git'
 include_cookbook 'gnome-tools'
 include_cookbook 'golang'
 include_cookbook 'home'
@@ -16,7 +16,7 @@ include_cookbook 'ime'
 #include_cookbook 'jdk'
 #include_cookbook 'joke'
 include_cookbook 'networkmanager'
-#include_cookbook 'nodejs'
+include_cookbook 'nodejs'
 include_cookbook 'pulseaudio'
 include_cookbook 'python'
 #include_cookbook 'r'
@@ -30,13 +30,14 @@ include_cookbook 'env'
 #include_cookbook 'yamanakalab'
 include_cookbook 'gvfs'
 include_cookbook 'alacritty'
+include_cookbook 'cndrvcups'
 
-#package 'gimp'
+package 'gimp'
 package 'inkscape'
-#package 'keepassxc'
+package 'keepassxc'
 #package 'pdfshuffler'
 #package 'scilab'
-#package 'virtualbox'
+package 'virtualbox'
 package 'vlc'
 #package 'wxmaxima'
 
@@ -49,6 +50,10 @@ remote_file "/etc/X11/xorg.conf.d/10-touchpad.conf" do
 	mode "644"
 	owner "root"
 	group "root"
+end
+
+remote_file "/etc/systemd/logind.conf" do
+	mode "0644"
 end
 
 remote_file "/etc/systemd/timesyncd.conf" do

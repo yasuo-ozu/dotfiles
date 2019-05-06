@@ -7,20 +7,32 @@ export XMODIFIER=@im=fcitx
 export XMODIFIERS=@im=fcitx
 
 export LC_ALL=ja_JP.UTF-8
-fcitx &
 
 if xrandr | sed -ne '/eDP1/p' | grep -q 3840x2160; then
 	xrandr --output eDP1 --mode 1920x1080
+	xrandr --output eDP1 --brightness 0.7
 fi
-	
 
 xmodmap -e "keycode 66 = Caps_Lock"
 xmodmap -e "remove lock = Caps_Lock"
 
 xsetroot -solid DarkSlateBlue
 
-stalonetray &
-nm-applet &
+run_widget() {
+	if which "$1" &> /dev/null; then
+		killall -q "$1"
+		while pgrep -u $UID -x "$1" &>/dev/null; do sleep .2; done
+		$@ &
+	fi
+}
+
+if ! which awesome &> /dev/null; then
+	run_widget stalonetray
+fi
+
+run_widget volumeicon
+run_widget nm-applet
+run_widget fcitx
 
 if which awesome &>/dev/null; then
 	exec awesome

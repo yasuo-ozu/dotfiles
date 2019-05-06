@@ -60,9 +60,11 @@ case "$1" in
         case "$3" in
             close)
                 logger 'LID closed'
+                XAUTHORITY=$(ps -C xinit -f --no-header | sed -n 's/.*-auth //; s/ -[^ ].*//; p') xset -display :0 dpms force off
                 ;;
             open)
                 logger 'LID opened'
+                XAUTHORITY=$(ps -C xinit -f --no-header | sed -n 's/.*-auth //; s/ -[^ ].*//; p') xset -display :0 dpms force on
                 ;;
             *)
                 logger "ACPI action undefined: $3"
