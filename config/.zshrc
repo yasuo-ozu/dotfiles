@@ -35,7 +35,6 @@ colors
 
 local return_code="%(?..%{$fg[red]%}%? %{$reset_color%})"
 PROMPT='\
-%{$fg[red]%}`[ "$(ls -A ~/.vim/swap | wc -l )" -gt "$(ps -eo comm | grep -e vim | wc -l)" ] && echo -n !\ `\
 %{$fg[blue]%}{ %c } \
 %{$fg[green]%}`  git rev-parse --abbrev-ref HEAD 2> /dev/null || echo ""  `%{$reset_color%} \
 %{$fg[red]%}%(!.#.»)%{$reset_color%} '
@@ -210,5 +209,21 @@ runtex() {
 		cp -r "$HOME/.local/share/runtex" "$TEXDIR"
 	fi
 	PWD="$TEXDIR" make -C "$TEXDIR" "$@"
+}
+
+list_dangling_vim_swap_file() {
+	local SWAPDIR="$(cd ~/.vim/swap/; pwd)"
+	local SWAPLIST="$(find "$SWAPDIR" -type f)"
+	local PROCLIST=(`pidof vim nvim`)
+	for P in "${PROCLIST[@]}"; do
+		local FDLIST=($(find "/proc/$P/fd/"))
+		for L in "${FDLIST[@]}"; do
+			if [ -h "$L" ]; then
+				local F="$(readlink "$L")"
+				SWAPLIST="$(diff <(echo "$SWAPLIST") <(echo "$F") | sed -ne '/< /p' | cut -c 3-)"
+			fi
+		done
+	done
+	echo "$SWAPLIST"
 }
 		
