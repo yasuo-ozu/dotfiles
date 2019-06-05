@@ -1,5 +1,6 @@
 ROOT_DIR = File.expand_path('../..', __FILE__)
 PLATFORM = node[:platform]
+node[:available_printers] = nil
 MItamae::RecipeContext.class_eval do
 	def evacuate_file(f)
 		backupfile = "#{f}.bak"
@@ -111,4 +112,44 @@ MItamae::RecipeContext.class_eval do
 			end
 		end
 	end
+	
+	def printer(name, uri = nil)
+      if node[:available_printers].nil?
+        puts "running lpinfo..."
+        available_printers = []
+        printer_item = nil
+        lpinfo_output = `env -u LC_TYPE -u LC_ALL -u LC_MESSAGES lpinfo -l -v`
+        lpinfo_output.each_line{|line|
+          line.lstrip!
+          if line.start_with?("Device:")
+            if !printer_item.nil?
+              available_printers.insert(-1, printer_item)
+            end
+            printer_item = {}
+            line.slice!(0,7)
+          end
+          line.lstrip!
+          idx = line.index(" = ")
+          prop = line.slice(0, idx)
+          val = line.slice(idx + 3..line.length - 1)
+          printer_item[prop] = val.chomp
+        }
+        if !printer_item.nil?
+          available_printers.insert(-1, printer_item)
+        end
+        node[:available_printers] = available_printers
+      end
+      for item in node[:available_printers] do
+        if !item["make-and-model"].nil? and !item["make-and-model"].index(name).nil?
+          uri = item["uri"]
+          break
+        end
+      end
+      if ! uri.nil?
+        execute "enable printer #{uri} as #{name}" do
+          user "root"
+          command "lpadmin -p \"#{name.gsub(/ /, "_")}\" -E -v \"#{uri}\""
+        end
+      end
+    end
 end

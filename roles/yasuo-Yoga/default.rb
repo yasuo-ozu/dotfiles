@@ -33,17 +33,8 @@ include_cookbook 'alacritty'
 include_cookbook 'ocaml'
 
 include_cookbook 'cndrvcups'
-remote_file "/etc/cups/printers.conf" do
-	user "root"
-	owner "root"
-	group "cups"
-	mode "600"
-end
-execute "place ppd file" do
-	user "root"
-    command "gzip -cd /usr/share/cups/model/CNCUPSMF720CZK.ppd.gz > /etc/cups/ppd/Canon_MF720C_Series.ppd ; chown root:cups /etc/cups/ppd/Canon_MF720C_Series.ppd ; chmod 0640 /etc/cups/ppd/Canon_MF720C_Series.ppd"
-    not_if "[ -f /etc/cups/ppd/Canon_MF720C_Series.ppd ]"
-end
+printer "Canon MF720C Series"
+printer "Virtual PDF Printer"
 
 package 'gimp'
 package 'inkscape'
@@ -92,3 +83,4 @@ execute "set console font fot HiDPi" do
   command "echo -e 'FONT=latarcyrheb-sun32\nFONT_MAP=8859-2' >> /etc/vconsole.conf"
   not_if "cat /etc/vconsole.conf | grep -q '^FONT='"
 end
+
