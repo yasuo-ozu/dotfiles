@@ -47,6 +47,7 @@ package 'vlc'
 
 #package_sp 'line-latest'
 package_sp 'yay'
+package_sp 'satysfi-git'
 
 dotfile '.local/bin'
 

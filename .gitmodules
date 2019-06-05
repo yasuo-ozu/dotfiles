@@ -7,3 +7,6 @@
 [submodule "contrib/dwm"]
 	path = contrib/dwm
 	url = https://github.com/yasuo-ozu/dwm.git
+[submodule "contrib/satysfi-git"]
+	path = contrib/satysfi-git
+	url = https://github.com/yasuo-ozu/aur-satysfi-git.git
