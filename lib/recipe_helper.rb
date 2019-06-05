@@ -106,7 +106,7 @@ MItamae::RecipeContext.class_eval do
 			end
 			execute "install #{name} from aur" do
 				user node[:user]
-				command "yay --noconfirm -S \"#{name}\""
+				command "yay --removemake --noconfirm -S \"#{name}\""
 				not_if "pacman -Qi \"#{name}\" > /dev/null"
 			end
 		end
