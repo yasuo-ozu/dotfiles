@@ -30,6 +30,7 @@ include_cookbook 'env'
 #include_cookbook 'yamanakalab'
 include_cookbook 'gvfs'
 include_cookbook 'alacritty'
+include_cookbook 'ocaml'
 
 include_cookbook 'cndrvcups'
 remote_file "/etc/cups/printers.conf" do
