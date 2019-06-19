@@ -16,7 +16,7 @@ include_cookbook 'ime'
 #include_cookbook 'jdk'
 #include_cookbook 'joke'
 include_cookbook 'networkmanager'
-include_cookbook 'nodejs'
+#include_cookbook 'nodejs'
 include_cookbook 'pulseaudio'
 include_cookbook 'python'
 #include_cookbook 'r'
@@ -85,3 +85,4 @@ execute "set console font fot HiDPi" do
   not_if "cat /etc/vconsole.conf | grep -q '^FONT='"
 end
 
+package "libreoffice-fresh-ja"
