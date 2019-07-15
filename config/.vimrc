@@ -319,3 +319,16 @@ noremap <C-w>+ <C-w>3+
 noremap <C-w>- <C-w>3-
 noremap <C-w>< <C-w>3<
 noremap <C-w>> <C-w>3>
+
+function! s:RunMake()
+	let base = expand("%:r")
+	let ext = expand("%:e")
+	if ext ==? "tex"
+		execute "make! " . base . ".pdf"
+	else
+		execute "make! " . base
+	endif
+endfunction
+
+set exrc
+nnoremap <C-g>m :call <SID>RunMake()<CR>
