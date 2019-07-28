@@ -1,12 +1,6 @@
-[submodule "contrib/yay"]
-	path = contrib/yay
-	url = https://aur.archlinux.org/yay.git
 [submodule "contrib/line-latest"]
 	path = contrib/line-latest
 	url = https://github.com/yasuo-ozu/aur-line-latest.git
 [submodule "contrib/dwm"]
 	path = contrib/dwm
 	url = https://github.com/yasuo-ozu/dwm.git
-[submodule "contrib/satysfi-git"]
-	path = contrib/satysfi-git
-	url = https://github.com/yasuo-ozu/aur-satysfi-git.git
