@@ -1,4 +1,14 @@
+execute "kill pcspkr" do
+	command "echo 'blacklist pcspkr' > /etc/modprobe.d/nobeep.conf"
+	not_if "[ -e /etc/modprobe.d/nobeep.conf ]"
+end
 
+execute "set console font fot HiDPi" do
+  command "echo -e 'FONT=latarcyrheb-sun32\nFONT_MAP=8859-2' >> /etc/vconsole.conf"
+  not_if "cat /etc/vconsole.conf | grep -q '^FONT='"
+end
+
+package_sp 'yay'
 include_cookbook 'base'
 include_cookbook 'base-devel'
 include_cookbook 'base-utils'
@@ -46,7 +56,6 @@ package 'vlc'
 #package 'wxmaxima'
 
 #package_sp 'line-latest'
-package_sp 'yay'
 package_sp 'satysfi-git'
 
 dotfile '.local/bin'
@@ -73,16 +82,6 @@ package "smbclient"
 execute "setup ntp" do
 	command "timedatectl set-ntp true"
 	not_if "LANG=C timedatectl status | sed -ne '/NTP/p' | grep -q active"
-end
-
-execute "kill pcspkr" do
-	command "echo 'blacklist pcspkr' > /etc/modprobe.d/nobeep.conf"
-	not_if "[ -e /etc/modprobe.d/nobeep.conf ]"
-end
-
-execute "set console font fot HiDPi" do
-  command "echo -e 'FONT=latarcyrheb-sun32\nFONT_MAP=8859-2' >> /etc/vconsole.conf"
-  not_if "cat /etc/vconsole.conf | grep -q '^FONT='"
 end
 
 package "libreoffice-fresh-ja"
