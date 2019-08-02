@@ -44,6 +44,11 @@ include_cookbook 'ocaml'
 
 include_cookbook 'cndrvcups'
 printer "Canon MF720C Series"
+execute "place ppd file" do	
+	user "root"	
+    command "gzip -cd /usr/share/cups/model/CNCUPSMF720CZK.ppd.gz > /etc/cups/ppd/Canon_MF720C_Series.ppd ; chown root:cups /etc/cups/ppd/Canon_MF720C_Series.ppd ; chmod 0640 /etc/cups/ppd/Canon_MF720C_Series.ppd"	
+    not_if "[ -f /etc/cups/ppd/Canon_MF720C_Series.ppd ]"	
+end
 printer "Virtual PDF Printer"
 
 package 'gimp'

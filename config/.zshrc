@@ -227,3 +227,4 @@ list_dangling_vim_swap_file() {
 	echo "$SWAPLIST"
 }
 		
+alias mv="mv -i"
