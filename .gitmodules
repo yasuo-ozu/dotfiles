@@ -4,6 +4,3 @@
 [submodule "contrib/dwm"]
 	path = contrib/dwm
 	url = https://github.com/yasuo-ozu/dwm.git
-[submodule "contrib/yay"]
-	path = contrib/yay
-	url = https://github.com/yasuo-ozu/aur-yay.git
