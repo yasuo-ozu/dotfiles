@@ -1,5 +1,6 @@
 
 # package 'arch-install-scripts'
+package 'inetutils'
 package 'bind-tools'
 package 'btrfs-progs'
 package 'cmake'

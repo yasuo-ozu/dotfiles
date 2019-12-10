@@ -43,11 +43,16 @@ include_cookbook 'alacritty'
 include_cookbook 'ocaml'
 
 include_cookbook 'cndrvcups'
-printer "Canon MF720C Series"
 execute "place ppd file" do	
 	user "root"	
     command "gzip -cd /usr/share/cups/model/CNCUPSMF720CZK.ppd.gz > /etc/cups/ppd/Canon_MF720C_Series.ppd ; chown root:cups /etc/cups/ppd/Canon_MF720C_Series.ppd ; chmod 0640 /etc/cups/ppd/Canon_MF720C_Series.ppd"	
     not_if "[ -f /etc/cups/ppd/Canon_MF720C_Series.ppd ]"	
+end
+printer "Canon MF720C Series"
+execute "place ppd file" do	
+	user "root"	
+    command "cp /usr/share/cups/model/CUPS-PDF_noopt.ppd > /etc/cups/ppd/Virtual_PDF_Printer.ppd ; chown root:cups /etc/cups/ppd/Virtual_PDF_Printer.ppd ; chmod 0640 /etc/cups/ppd/Virtual_PDF_Printer.ppd"	
+    not_if "[ -f /etc/cups/ppd/Virtual_PDF_Printer.ppd ]"	
 end
 printer "Virtual PDF Printer"
 
