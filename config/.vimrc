@@ -28,9 +28,9 @@ let g:netrw_altv = 1
 let g:netrw_alto = 1
 set scrolloff=2
 set showcmd
-nnoremap /<Esc> :nohlsearch<CR>
-nnoremap /<Up>	/<Up>
-nnoremap ?<Esc> :nohlsearch<CR>
+"noremap <nowait> /<Esc> :nohlsearch<CR>
+""nnoremap /<Up>	/<Up>
+"nnoremap <nowait> ?<Esc> :nohlsearch<CR>
 inoremap <C-w> <Esc><C-w>
 cnoremap <C-n> <Tab>
 " 全角スペース可視化
@@ -40,7 +40,8 @@ let g:netrw_liststyle=3
 
 noremap <C-]> <C-]>zt
 noremap <C-w>] <C-w>]z12<CR>
-nnoremap <CR> o<ESC>
+"nnoremap <CR> o<ESC>
+"nnoremap <C-m> o<ESC>
 
 " for gtags
 nnoremap <C-\> :GtagsCursor<CR>
@@ -48,21 +49,6 @@ nnoremap <C-\> :GtagsCursor<CR>
 " 矢印キーを使った場合、同じ行中を含めて移動
 nnoremap <Up> g<Up>
 nnoremap <Down> g<Down>
-
-function! s:AddParenHook()
-	let commands = ['c', 'd']
-	let ranges = ['i', 'a']
-	let paren = ['(', '[', '{', '<', '"', "'", '`']
-
-	for a in commands
-		for b in ranges
-			for c in paren
-				exe "nnoremap " . a . b . c . " :if stridx(getline('.')[0:col('.')],'" . c . "')==-1<CR>normal! f" . c . "<CR>endif<CR>" . a . b . c
-			endfor
-		endfor
-	endfor
-endfunction
-call s:AddParenHook()
 
 vnoremap < <gv
 vnoremap > >gv
@@ -76,12 +62,13 @@ nnoremap <C-w><S-Right> <C-w>L
 " nnoremap <C-w>< <C-w><<C-w>
 "nnoremap <S-q> :cclose<CR>:mks!<CR>:wa<CR>:qa<CR>
 
-" inoremap ( ()<C-g>U<Left>
-" inoremap [ []<C-g>U<Left>
-" inoremap { {}<C-g>U<Left>
-" inoremap " ""<C-g>U<Left>
-" inoremap ' ''<C-g>U<Left>
-" inoremap ` ``<C-g>U<Left>
+
+"inoremap ( ()<C-g>U<Left>
+"inoremap [ []<C-g>U<Left>
+"inoremap { {}<C-g>U<Left>
+"inoremap " ""<C-g>U<Left>
+"inoremap ' ''<C-g>U<Left>
+"inoremap ` ``<C-g>U<Left>
 
 "" で行番号を相対表示
 "function! ToggleRelative()
@@ -115,50 +102,23 @@ set shellpipe=2>
 "endfunction
 "autocmd QuickfixCmdPost vimgrep call OpenModifiableQF()
 
-function! BeginInsert()
-	"let s:touch_status = system('/home/yasuo/.local/bin/toggle-touchpad.sh status')
-	"call system('/home/yasuo/.local/bin/toggle-touchpad.sh disable --silent')
-endfunction
-
-function! EndInsert()
-	call system('ibus engine xkb:jp::jpn')
-	" if exists('s:touch_status') == 1
-	" 	call system('/home/yasuo/.local/bin/toggle-touchpad.sh ' . s:touch_status . ' --silent')
-	" endif
-endfunction
-
-autocmd vimrc VimEnter,InsertLeave * call EndInsert()
-autocmd vimrc VimLeave,InsertEnter * call BeginInsert()
-
-
-" <Tab>が効かなくなるため無効化
-" inoremap <expr><C-i>     neocomplete#complete_common_string()
-
-" source ~/.vim/rc/*.vim
+" function! BeginInsert()
+" 	"let s:touch_status = system('/home/yasuo/.local/bin/toggle-touchpad.sh status')
+" 	"call system('/home/yasuo/.local/bin/toggle-touchpad.sh disable --silent')
+" endfunction
+" 
+" function! EndInsert()
+" 	call system('ibus engine xkb:jp::jpn')
+" 	" if exists('s:touch_status') == 1
+" 	" 	call system('/home/yasuo/.local/bin/toggle-touchpad.sh ' . s:touch_status . ' --silent')
+" 	" endif
+" endfunction
+" 
+" autocmd vimrc VimEnter,InsertLeave * call EndInsert()
+" autocmd vimrc VimLeave,InsertEnter * call BeginInsert()
 
 " set spell
 au BufRead,BufNewFile *.txt set syntax=hybrid
-
-" TypeScript
-let g:js_indent_typescript = 1
-
-" vim-clang
-let g:clang_c_completeopt = 'longest,menuone'
-let g:clang_cpp_completeopt = 'longest,menuone'
-"let g:clang_c_completeopt = 'menu,menuone'
-"let g:clang_cpp_completeopt = 'menu,menuone'
-let g:clang_c_options = '--std=gnu11'
-let g:clang_cpp_options = '--std=c++11'
-" let g:clang_format_auto = 1
-" let g:clang_check_syntax_auto = 1
-let g:clang_verbose_pmenu = 1
-let g:clang_distringagsopt = ''
-set conceallevel=2
-set concealcursor=vin
-let g:clang_snippets=1
-let g:clang_conceal_snippets=1
-let g:clang_snippets_engine='clang_complete'
-let g:SuperTabDefaultCompletionType='<c-x><c-u><c-p>'
 
 " vim 8.0
 set breakindent
@@ -181,19 +141,29 @@ nnoremap お o
 let g:tex_fold_enabled=1
 "set foldmethod=syntax
 let g:tex_no_error=1
-set conceallevel=0
 
 " dein setting
+let plugin_dir = expand('~/.cache/dein')
+let install_dir = expand('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+if &runtimepath !~# '/dein.vim'
+  if !isdirectory(install_dir)
+    execute '!git clone https://github.com/Shougo/dein.vim' install_dir
+  endif
+endif
+"let g:dein#auto_recache = 1
 if isdirectory(expand('~/.cache/dein'))
-	let plugin_dir = expand('~/.cache/dein')
-	let install_dir = expand('~/.cache/dein/repos/github.com/Shougo/dein.vim')
+	let s:toml_file = expand('~/.vim/dein.toml')
 	let &runtimepath = &runtimepath . ',' . install_dir
 	if dein#load_state(plugin_dir)
 		call dein#begin(plugin_dir)
 		call dein#add(install_dir)
 
-		call dein#add('leafgarland/typescript-vim')
-
+		if !has('nvim')
+		  call dein#add('roxma/nvim-yarp')
+		  call dein#add('roxma/vim-hug-neovim-rpc')
+		endif
+		call dein#load_toml(s:toml_file)
+		call dein#local('~/Documents/vim-wisetab')
 		call dein#end()
 		call dein#save_state()
 	endif
@@ -206,12 +176,14 @@ filetype off
 filetype plugin on
 filetype indent on
 
-autocmd vimrc ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=237
+autocmd vimrc ColorScheme * highlight CursorLine cterm=NONE ctermfg=NONE ctermbg=NONE
 autocmd vimrc ColorScheme * highlight Comment cterm=NONE ctermfg=100 ctermbg=NONE
 autocmd vimrc ColorScheme * highlight Tag cterm=NONE ctermfg=NONE ctermbg=52
 autocmd vimrc ColorScheme * highlight Todo cterm=NONE ctermfg=NONE ctermbg=100
 autocmd vimrc ColorScheme * highlight LineNr cterm=NONE ctermfg=242 ctermbg=NONE
 autocmd vimrc ColorScheme * highlight CursorLineNr cterm=underline ctermfg=250 ctermbg=NONE
+autocmd vimrc ColorScheme * highlight IncSearch ctermfg=4 ctermbg=0
+autocmd vimrc ColorScheme * hi Pmenu ctermbg=235 guibg=gray ctermfg=250 guifg=#cccccc
 
 colorscheme darkblue
 syntax on
@@ -223,75 +195,8 @@ set tabstop=4
 set shiftwidth=0
 set list
 set listchars=tab:»\ ,trail:-
-highlight SpecialKey ctermfg=242
-function! s:InsertSpaceIndent()
-	let sts = &softtabstop == 0 ? &tabstop : &softtabstop
-	let col = col('.') - 1
-	if col == 0 || getline('.')[col - 1] != ' '
-		return "	"
-	else
-		let s = ""
-		let c = (virtcol('.') - 1) % sts
-		while c < sts
-			let s = s . " "
-			let c = c + 1
-		endwhile
-		return s
-	endif
-endfunction
-function! s:CopyIndent(r)
-	let ts = &tabstop
-	let l = line('.')
-	let r = a:r + l
-	let ls = getline(l)
-	let lm = strlen(ls)
-	let rs = getline(r)
-	let rm = strlen(rs)
-	echo ls
-	let c = 0
-	let d = 0
-	let i = 0
-	let j = 0
-	while i < lm
-		let lc = ls[i]
-		if lc == ' '
-			let c = c + 1
-		elseif lc == '	'
-			let c = c + ts - ( c % ts )
-		else
-			break
-		endif
-		let i = i + 1
-	endwhile
-	while j < rm && d < c
-		let rc = rs[j]
-		if rc == ' '
-			let d = d + 1
-		elseif rc == '	' && d + ts - ( d % ts ) <= c
-			let d = d + ts - ( d % ts )
-		else
-			break
-		endif
-		let j = j + 1
-	endwhile
-	let rs = strpart(rs, 0, j)
-	while d < c
-		if &expandtab == 0 && d + ts - ( d % ts ) <= c
-			let rs = rs . '	'
-			let d = d + ts - ( d % ts )
-		else
-			let rs = rs . ' '
-			let d = d + 1
-		endif
-	endwhile
-	let rs = rs . strpart(ls, i)
-	call setline('.', rs)
-endfunction
 
-inoremap <expr> <C-i> <SID>InsertSpaceIndent()
-inoremap <CR> <CR>a<BS><ESC>:call <SID>CopyIndent(-1)<CR>A
-nnoremap o oa<BS><Esc>:call <SID>CopyIndent(-1)<CR>A
-nnoremap O Oa<BS><Esc>:call <SID>CopyIndent(1)<CR>A
+highlight SpecialKey ctermfg=242
 
 for file in split(glob("$HOME/.vim/template/*"), "\n")
 	execute "autocmd vimrc BufNewFile *." . fnamemodify(file, ":e") ."  0r " . file
@@ -324,7 +229,7 @@ function! s:RunMake()
 	let base = expand("%:r")
 	let ext = expand("%:e")
 	if ext ==? "tex"
-		execute "make! " . base . ".pdf"
+		execute "make! OPEN=" . base . ".pdf"
 	else
 		execute "make! " . base
 	endif
@@ -332,3 +237,104 @@ endfunction
 
 set exrc
 nnoremap <C-g>m :call <SID>RunMake()<CR>
+
+let g:deoplete#enable_at_startup = 1
+if has('nvim')
+	set inccommand=split
+endif
+
+set smarttab
+set tabstop=4
+set softtabstop=4
+set noexpandtab
+
+nnoremap gh <C-w>h
+nnoremap gj <C-w>j
+nnoremap gk <C-w>k
+nnoremap gl <C-w>l
+nnoremap gw <C-w>w
+nnoremap gp <C-w><C-p>
+tnoremap <C-n> <C-w><S-n>
+"tnoremap <C-w> <C-w><S-n><C-w>
+
+autocmd ColorScheme * highlight NormalNC ctermfg=243 | highlight StatusLine ctermfg=0
+autocmd WinEnter,BufWinEnter * set wincolor= | set cul
+autocmd WinLeave * set wincolor=NormalNC | set nocul
+
+highlight StatusLine ctermfg=0
+
+function! s:MoveToTerm()
+    if empty(term_list())
+    	let oldwinnr=0
+    	while oldwinnr != winnr()
+			let oldwinnr = winnr()
+			execute "wincmd j"
+		endwhile
+    	execute "wincmd j"
+        execute "terminal"
+    else
+        let bufnr = term_list()[0]
+        "execute bufwinnr(bufnr) . "wincmd w"
+        call win_gotoid(win_findbuf(bufnr)[0])
+        if mode() == 'n'
+        	execute "normal i"
+        endif
+    endif
+endfunction
+nnoremap <silent> gc :call <SID>MoveToTerm()<CR>
+let g:lsp_log_verbose = 5
+let g:lsp_log_file = expand('~/vim-lsp.log')
+
+
+nnoremap <silent> <C-x>a :LspCodeAction<CR>
+nnoremap <silent> <C-x>d :LspPeekDefinition<CR>
+nnoremap <silent> <C-x>h :LspHover<CR>
+nnoremap <silent> <C-x>n :LspNextReference<CR>
+nnoremap <silent> <C-x>p :LspPreviousReference<CR>
+nnoremap <silent> <C-x>] :LspDefinition<CR>
+nnoremap <silent> <C-x>[ :LspDeclaration<CR>
+nnoremap <silent> <C-x>r :LspReferences<CR>
+nnoremap <silent> <C-x>} :LspTypeDefinition<CR>
+
+"hi clear LspWarningHighlight
+"hi clear LspWarningLine
+"hi clear LspWarningText
+"hi clear LspErrorHighlight
+"hi clear LspErrorLine
+"hi clear LspErrorText
+"hi clear LspInformationHighlight
+"hi clear LspInformationLine
+"hi clear LspInformationText
+"hi clear LspHintHighlight
+"hi clear LspHintLine
+"hi clear LspHintText
+
+set mouse=n
+set ttymouse=xterm2
+let g:lsp_async_completion = 1
+
+"set grepprg=grep\ -InH
+set undofile
+set undodir=~/.vim/undo
+
+au TerminalWinOpen set nonumber
+
+nmap <buffer> [g <Plug>(lsp-previous-diagnostic)
+nmap <buffer> ]g <Plug>(lsp-next-diagnostic)
+nmap <buffer> K <plug>(lsp-hover)
+set conceallevel=0
+
+
+nnoremap <silent> g] :cnext<CR>
+nnoremap <silent> g[ :cprev<CR>
+nnoremap <silent> cc :cclose<CR>:nohlsearch<CR>:pclose<CR>
+nnoremap <silent> <C-x>p :LspPeekDefinition<CR>
+nnoremap <silent> <C-x>m :make! OPEN=%<CR>
+
+set switchbuf="split"
+augroup QfAutoCommands
+	autocmd!
+
+	" Auto-close quickfix window
+	autocmd WinEnter * if (winnr('$') == 1) && (getbufvar(winbufnr(0), '&buftype')) == 'quickfix' | quit | endif
+augroup END

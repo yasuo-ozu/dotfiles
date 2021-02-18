@@ -33,6 +33,7 @@ setopt prompt_subst
 autoload -Uz colors
 colors
 
+if [[ "$ASCIINEMA_REC" -ne 1 ]]; then
 local return_code="%(?..%{$fg[red]%}%? %{$reset_color%})"
 PROMPT='\
 %{$fg[blue]%}{ %c } \
@@ -42,6 +43,9 @@ PROMPT='\
 PROMPT2='%{$fg[red]%}\ %{$reset_color%}'
 
 RPS1='%{$fg[blue]%}%~%{$reset_color%} ${return_code} '
+else
+PROMPT="$ "
+fi
 
 export PATH=$PATH:~/bin
 
@@ -228,3 +232,7 @@ list_dangling_vim_swap_file() {
 }
 		
 alias mv="mv -i"
+
+eval $(ssh-agent)
+
+alias ssh="TERM=xterm ssh"

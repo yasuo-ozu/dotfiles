@@ -1,10 +1,17 @@
 # vim: set ft=sh :
 
-export GTK_IM_MODULE=fcitx
-export QT_IM_MODULE=fcitx
-export DefaultIMModule=fcitx
-export XMODIFIER=@im=fcitx
-export XMODIFIERS=@im=fcitx
+# export GTK_IM_MODULE=fcitx
+# export QT_IM_MODULE=fcitx
+# export DefaultIMModule=fcitx
+# export XMODIFIER=@im=fcitx
+# export XMODIFIERS=@im=fcitx
+
+export GTK_IM_MODULE=ibus
+export DefaultIMModule=ibus
+export XMODIFIER=@im=ibus
+export XMODIFIERS=@im=ibus
+export QT_IM_MODULE=ibus
+ibus-daemon -drx &
 
 export LC_ALL=ja_JP.UTF-8
 
@@ -32,7 +39,8 @@ fi
 
 run_widget volumeicon
 run_widget nm-applet
-run_widget fcitx
+# run_widget fcitx
+run_widget blueberry-tray
 
 if which awesome &>/dev/null; then
 	exec awesome
