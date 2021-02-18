@@ -1,20 +1,24 @@
 #!/bin/sh
+
+# vim:set expandtab :
 set -e
 
-mitamae_version="1.6.3"
-mitamae_linux_sha256="96882a6336fcf821f77b3fd4a8608b5b9cd0905e0616757a27baf3cae7a66386"
-mitamae_darwin_sha256="6ab3471024abc0206f3d5e5df45035f85f76b6fe8cc7a1f2ad262975cc850d59"
+mitamae_version="1.12.1"
 
 mitamae_cache="mitamae-${mitamae_version}"
 if ! [ -f "bin/${mitamae_cache}" ]; then
   case "$(uname)" in
     "Linux")
       mitamae_bin="mitamae-x86_64-linux"
-      mitamae_sha256="$mitamae_linux_sha256"
+      mitamae_sha256="5bec15e75ab1012fbf9c910ec0ab6e65dff93adda86ea1369d895cb47c35246e"
       ;;
     "Darwin")
-      mitamae_bin="mitamae-x86_64-darwin"
-      mitamae_sha256="$mitamae_darwin_sha256"
+      case "$(uname -m)" in
+          "x86_64")
+              mitamae_bin="mitamae-x86_64-darwin"
+              mitamae_sha256="c0c3b21ec589c19c9163f06ffeee781d8a4e900ec74be5fe7680b06807e832ad"
+              ;;
+      esac
       ;;
     *)
       echo "unexpected uname: $(uname)"
